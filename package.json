@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/KyleKowalski/Bamazon#readme",
   "dependencies": {
+    "ascii-table": "0.0.9",
     "inquirer": "^3.3.0",
     "mysql": "^2.15.0"
   }

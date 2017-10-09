@@ -7,7 +7,7 @@ CREATE TABLE products (
 	product_id INT NOT NULL AUTO_INCREMENT,
     product_name VARCHAR(100) NOT NULL,
     fk_department_id INT NULL,
-    product_price FLOAT(12,2) NULL,
+    product_price DECIMAL(12,2) NULL,
     product_stock_quantity INT NULL,
     product_active BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY (product_id)
@@ -21,19 +21,18 @@ CREATE TABLE departments (
 	PRIMARY KEY (department_id)
 );
 
-CREATE TABLE product_sales (
+CREATE TABLE sale (
 	sale_id INT NOT NULL AUTO_INCREMENT,
     fk_product_id INT NOT NULL,
     sale_quantity INT NOT NULL,
     PRIMARY KEY (sale_id)
 );
 
-
 INSERT INTO departments (department_id, department_name, department_description, department_overhead_cost) VALUES 
 (1, "paint", "all things paint related", 1000),
 (2, "lawn and garden", "outdoor items", 1500),
 (3, "tools", "tools... and... tools?", 2000),
-(4, "adminstration", "adminstrative work", 5000)
+(4, "adminstration", "adminstrative work", 5000);
 
 INSERT INTO products (product_name, fk_department_id, product_price, product_stock_quantity) VALUES
 ("Orange 1 Gallon", 1, 10.00, 50),
@@ -46,7 +45,6 @@ INSERT INTO products (product_name, fk_department_id, product_price, product_sto
 ("Screw Driver Set", 3, 30.00, 30),
 ("Wrench Set", 3, 20.00, 40),
 ("Drills", 3, 44.99, 20);
-
 
 select * from departments;
 
