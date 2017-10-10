@@ -64,10 +64,10 @@ function listProductsByDepartment(departmentName) {
     var table = new AsciiTable();
     table.setHeading('ID', 'Product', 'Department', 'Price', 'Quantity');
     // this is the default 'all' departments
-    var thisQuery = `select product_id, product_name, department_name, product_price, product_stock_quantity from products inner join departments on department_id = fk_department_id`;
+    var thisQuery = `SELECT product_id, product_name, department_name, product_price, product_stock_quantity from products inner join departments on department_id = fk_department_id`;
 
     if (departmentName != '') {
-        thisQuery = `select product_id, product_name, department_name, product_price, product_stock_quantity from products inner join departments on department_id = fk_department_id where department_name like '%${departmentName}%'`
+        thisQuery = `SELECT product_id, product_name, department_name, product_price, product_stock_quantity from products inner join departments on department_id = fk_department_id where department_name like '%${departmentName}%'`
     }
 
     connection.query(thisQuery, (err, result) => {

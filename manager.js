@@ -12,35 +12,113 @@ var connection = mysql.createConnection({
   });
 
 mainPrompt();
+connection.connect();
 
 function mainPrompt() {
     console.log(`\n\nWelcome To The Bamazon Manager Interface!\n`);
 
-    // db.listProductsByDepartment('');
-    
-    // inquirer.prompt([
-    //     {
-    //         type: 'input',
-    //         message: `Type in the ID number of the item you'd like to buy:`,
-    //         name: 'productId',
-    //         validate: (value) => !isNaN(value)
-    //     },
-    //     {
-    //         type: 'input',
-    //         message: `How many units would you like to buy?`,
-    //         name: 'quantity',
-    //         validate: (value) => !isNaN(value)
-    //     }
-    //     ]).then(function(response) {
-    //         console.log('blah');
-    //     })
+    inquirer.prompt([
+    {
+        type: 'list',
+        message: `\nPlease make a selection:\n`,
+        name: 'mainSelection',
+        choices: ['View Products For Sale', 'View Low Inventory (<5 quantity)', 'Add Inventory', 'Add New Product', 'Quit']
+    }
+    ]).then(function(response) {
+        if (response.mainSelection === 'View Products For Sale') {
+            listProductsByDepartment('');
+        }
+        else if (response.mainSelection === 'View Low Inventory (<5 quantity)') {
+            listLowInventory();
+        }
+        else if (response.mainSelection === 'Add Inventory') {
+            addInventoryPrompt();
+        }
+        else if (response.mainSelection === 'Add New Product') {
+
+        }
+        else {
+            console.log(`We've escaped our prompts somehow - record error on manager selection`);
+        }
+    })
+}
+
+function listProductsByDepartment(departmentName) {
+    var table = new AsciiTable();
+    table.setHeading('ID', 'Product', 'Department', 'Price', 'Quantity');
+    // this is the default 'all' departments
+    var thisQuery = `select product_id, product_name, department_name, product_price, product_stock_quantity from products inner join departments on department_id = fk_department_id`;
+
+    if (departmentName != '') {
+        thisQuery = `select product_id, product_name, department_name, product_price, product_stock_quantity from products inner join departments on department_id = fk_department_id where department_name like '%${departmentName}%'`
+    }
+
+    connection.query(thisQuery, (err, result) => {
+		console.log(`\n Products On Hand:`);
+		result.forEach((product) => {
+			table.addRow(product.product_id, product.product_name, product.department_name, '$' + product.product_price, product.product_stock_quantity);
+		})
+        console.log(`${table.toString()}\n`);
+        mainPrompt();
+    });
+}
+
+function listLowInventory() {
+    var table = new AsciiTable();
+    table.setHeading('ID', 'Product', 'Department', 'Price', 'Quantity');
+
+    thisQuery = `select product_id, product_name, department_name, product_price, product_stock_quantity from products inner join departments on department_id = fk_department_id where product_stock_quantity < 6`
+
+    connection.query(thisQuery, (err, result) => {
+		console.log(`\n Products With Low Inventory:`);
+		result.forEach((product) => {
+			table.addRow(product.product_id, product.product_name, product.department_name, '$' + product.product_price, product.product_stock_quantity);
+		})
+        console.log(`${table.toString()}\n`);
+        mainPrompt();
+    });
+}
+
+function addInventoryPrompt() { 
+    inquirer.prompt([
+    {
+        type: 'input',
+        message: 'Enter the ID of the product to increase quantity of:',
+        name: 'productId',
+        validate: (value) => !isNaN(value)
+    },
+    {
+        type: 'input',
+        message: 'What quantity would you like to order and add to current stock?',
+        name: 'quantityToAdd',
+        validate: (value) => !isNaN(value)
+    }
+    ]).then(function(response) {
+        addInventory(response.productId, response.quantityToAdd);
+    })
+}
+
+function addInventory(productId, quantityToAdd) {
+    var quantityQuery = `SELECT product_id, product_name, product_stock_quantity, product_price FROM products WHERE product_id = ${productId}`
+    connection.query(quantityQuery, (err, result) => {
+        if (err) throw err;
+        var selectedProduct = result[0].product_name;
+        var currentQuantity = result[0].product_stock_quantity;
+        // TODO add a prompt to confirm adding?  - maybe - but we'll assume managers are compitent for now.
+        var newQuantity = parseInt(currentQuantity) + parseInt(quantityToAdd);
+
+        console.log(`\nAdding more inventory to '${selectedProduct}' - starting quantity: '${currentQuantity}' - ending quantity: '${newQuantity}'`)
+
+        var addQuantityQuery = `UPDATE products SET product_stock_quantity = ${newQuantity} WHERE product_id = ${productId}`
+        connection.query(addQuantityQuery, (err, result) => {
+        if (err) throw err;
+            console.log(`\n\nInventory Updated!\n`);
+            mainPrompt();
+        });
+    });
 }
 
 function quit() {
     console.log("\n=====\nHave a great day!\n\nGood Bye!\n=====");
     connection.end();
-}
-
-module.exports = {
-    mainPrompt: mainPrompt
 }
