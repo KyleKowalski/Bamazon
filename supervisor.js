@@ -1,11 +1,20 @@
+var mysql = require('mysql');
+var AsciiTable = require('ascii-table');
 var inquirer = require('inquirer');
-var main = require('./main.js');
-var db = require('./bamazonDB.js');
+// var main = require('./main.js');
+// var db = require('./bamazonDB.js');
+
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'bamazon_service',
+    password : 'password',
+    database : 'bamazon'
+  });
 
 function mainPrompt() {
     console.log(`\n\nWelcome To The Bamazon Supervisor Interface!\n`);
 
-    db.listProductsByDepartment();
+    // db.listProductsByDepartment('');
     
     // inquirer.prompt([
     //     {
@@ -26,7 +35,8 @@ function mainPrompt() {
 }
 
 function quit() {
-    main.mainPrompt();
+    console.log("\n=====\nHave a great day!\n\nGood Bye!\n=====");
+    connection.end();
 }
 
 module.exports = {

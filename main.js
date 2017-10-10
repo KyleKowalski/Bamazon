@@ -6,7 +6,7 @@
     var supervisor = require('./supervisor.js');
     var manager = require('./manager.js');
 
-    mainPrompt();
+    // mainPrompt();
 
     function mainPrompt() {
         db.openDb;

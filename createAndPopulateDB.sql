@@ -1,7 +1,7 @@
--- DROP DATABASE IF EXISTS bamazon_kyle;
--- CREATE database bamazon_kyle;
+-- DROP DATABASE IF EXISTS bamazon;
+-- CREATE database bamazon;
 
-USE bamazon_kyle;
+USE bamazon;
 
 CREATE TABLE products (
 	product_id INT NOT NULL AUTO_INCREMENT,
@@ -49,6 +49,8 @@ INSERT INTO products (product_name, fk_department_id, product_price, product_sto
 select * from departments;
 
 select * from products;
+
+select * from sale;
 
 select product_id, product_name, department_name, product_price, product_stock_quantity
 from products
