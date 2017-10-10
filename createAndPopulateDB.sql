@@ -56,3 +56,17 @@ select product_id, product_name, department_name, product_price, product_stock_q
 from products
 inner join departments on department_id = fk_department_id;
 
+
+SELECT department_id, department_name, department_description, department_overhead_cost
+from departments;
+
+select product_id, department_name, sale_quantity * product_price as unitProfit from sale
+left join products on product_id = fk_product_id
+left join departments on department_id = fk_department_id;
+
+
+select department_id, department_name, department_description, department_overhead_cost, sum(sale_quantity * product_price) as unit_sales, (sum(sale_quantity * product_price) - department_overhead_cost) as unit_profit from sale
+left join products on product_id = fk_product_id
+left join departments on department_id = fk_department_id
+group by department_name
+
